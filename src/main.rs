@@ -4,9 +4,17 @@ use std::io::Write;
 use rand::Rng;
 
 fn main() -> Result<()> {
+
+    // EX001: random number
     let mut rng = rand::thread_rng();
     let random_number = rand::thread_rng().gen_range(1..=100);
     let random_number_range: Vec<u32> = (0..10).map(|_| rng.gen_range(1..=100)).collect();
+
+    // EX002: shadowing
+    let x = 5;
+    // x = x + 1; // gets error since you can't change the value of an immutable variable
+    let x = x + 1; // but this works because you now have two variables, one shadows the other (!)
+
     let html_content = format!(r#"
     <!DOCTYPE html>
     <html>
@@ -34,9 +42,11 @@ fn main() -> Result<()> {
         <p>Random number: <b>{}</b></p>
         <p>Random number range: <b>{:?}</b></p>
         <p>(Note: the number is random everytime the site is generated, not every page load.)</p>
+        <h2>EX002: Shadowing</h2>
+        <p>x = {}</p>
     </body>
     </html>
-    "#, random_number, random_number_range);
+    "#, random_number, random_number_range, x);
 
     let html_path_and_file_name = "/var/www/rust/index.html";
     let mut file = File::create(html_path_and_file_name)?;
