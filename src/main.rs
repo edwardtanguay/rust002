@@ -1,22 +1,26 @@
 use anyhow::Result;
 use std::fs::File;
 use std::io::Write;
+use rand::Rng;
 
 fn main() -> Result<()> {
-    let html_content = r#"
+    let mut rng = rand::thread_rng();
+    let random_number = rand::thread_rng().gen_range(1..=100);
+    let random_number_range: Vec<u32> = (0..10).map(|_| rng.gen_range(1..=100)).collect();
+    let html_content = format!(r#"
     <!DOCTYPE html>
     <html>
     <head>
         <title>Rust Site</title>
         <style>
-            body {
-                background-color: #777;
+            body {{
+                background-color: #bbb;
                 font-family: sans-serif;
                 padding-left: 1rem;
-            }
-            a {
+            }}
+            a {{
                 color: #6E260E;
-            }
+            }}
         </style>
     </head>
     <body>
@@ -25,12 +29,19 @@ fn main() -> Result<()> {
         <p>See also <a target="_blank" href="https://tanguay-eu.vercel.app/forays/283">my notes</a> on this project.
         <hr/>
         <p>Currently learning Rust <a target="_blank" href="https://doc.rust-lang.org/stable/book/ch03-01-variables-and-mutability.html">variables and mutability</a>.
+        <hr/>
+        <h2>EX001: Create random number</h2>
+        <p>Random number: <b>{}</b></p>
+        <p>Random number range: <b>{:?}</b></p>
+        <p>(Note: the number is random everytime the site is generated, not every page load.)</p>
     </body>
     </html>
-    "#;
+    "#, random_number, random_number_range);
 
-    let mut file = File::create("/var/www/rust/index.html")?;
+    let html_path_and_file_name = "/var/www/rust/index.html";
+    let mut file = File::create(html_path_and_file_name)?;
     file.write_all(html_content.as_bytes())?;
+    println!("Site generated: {}", html_path_and_file_name);
 
     Ok(())
 
